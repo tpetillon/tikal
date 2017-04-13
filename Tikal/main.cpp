@@ -1,6 +1,8 @@
 #include <functional>
 #include <iostream>
 
+#include <Hypodermic/ContainerBuilder.h>
+
 #include "EventDispatcher.h"
 #include "TestEventTypes.h"
 
@@ -38,6 +40,28 @@ void nonCopyableTypeFunction(const NonCopyableType& v)
 
 class NonCopyableTypeEvent : public tikal::EventType<const NonCopyableType&> {};
 
+class ClassA {
+public:
+	ClassA()
+	{
+		std::cout << "ClassA constructor" << std::endl;
+	}
+
+	void hello() const
+	{
+		std::cout << "Hello from ClassA" << std::endl;
+	}
+};
+
+class ClassB {
+public:
+	ClassB(std::shared_ptr<ClassA> instanceA)
+	{
+		std::cout << "ClassB constructor" << std::endl;
+		instanceA->hello();
+	}
+};
+
 int main(int argc, char *argv[])
 {
 	std::function<void(void)> f1 = voidFunction;
@@ -64,4 +88,13 @@ int main(int argc, char *argv[])
 
 	ed.addEventListener<VoidEvent>(voidFunction);
 	ed.dispatchEvent<VoidEvent>();
+
+	Hypodermic::ContainerBuilder builder;
+
+	builder.registerType<ClassA>().singleInstance();
+	builder.registerType<ClassB>().singleInstance();
+
+	auto container = builder.build();
+
+	auto instanceA = container->resolve<ClassB>();
 }
