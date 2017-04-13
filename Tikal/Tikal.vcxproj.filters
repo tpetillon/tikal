@@ -26,10 +26,19 @@
     <ClInclude Include="EventDispatcher.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="EventType.h">
+    <ClInclude Include="Command.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="is_base_of_template.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestEventTypes.h">
+    <ClInclude Include="PayloadEvent.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestEvents.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,7 +4,7 @@
 #include <Hypodermic/ContainerBuilder.h>
 
 #include "EventDispatcher.h"
-#include "TestEventTypes.h"
+#include "TestEvents.h"
 
 void voidFunction()
 {
@@ -38,7 +38,7 @@ void nonCopyableTypeFunction(const NonCopyableType& v)
 	std::cout << "NonCopyableType " << v.value << std::endl;
 }
 
-class NonCopyableTypeEvent : public tikal::EventType<const NonCopyableType&> {};
+class NonCopyableTypeEvent : public tikal::PayloadEvent<const NonCopyableType&> {};
 
 class ClassA {
 public:

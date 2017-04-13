@@ -119,8 +119,10 @@
   <ItemGroup>
     <ClInclude Include="Command.h" />
     <ClInclude Include="EventDispatcher.h" />
-    <ClInclude Include="EventType.h" />
-    <ClInclude Include="TestEventTypes.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="is_base_of_template.h" />
+    <ClInclude Include="PayloadEvent.h" />
+    <ClInclude Include="TestEvents.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
