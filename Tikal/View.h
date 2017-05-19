@@ -3,19 +3,24 @@
 namespace tikal
 {
 
+template<typename TBaseView>
 class SceneObject;
 
+template<typename TBaseView>
 class View
 {
+	friend SceneObject<TBaseView>;
+
 public:
+	View() {}
+
 	View(View const&) = delete;
 	void operator=(View const&) = delete;
 
-	virtual void addDrawCommands(/*FrameState frameState*/) = 0;
-	virtual void drawGui() = 0;
+	SceneObject<TBaseView>* sceneObject() const { return m_sceneObject; }
 
-protected:
-	SceneObject& m_sceneObject;
+private:
+	SceneObject<TBaseView>* m_sceneObject;
 };
 
 }

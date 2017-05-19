@@ -4,7 +4,11 @@
 #include <Hypodermic/ContainerBuilder.h>
 
 #include "EventDispatcher.h"
+#include "SceneObject.h"
+#include "SceneRoot.h"
 #include "TestEvents.h"
+#include "View.h"
+#include "ViewInstantiator.h"
 
 void voidFunction()
 {
@@ -40,7 +44,8 @@ void nonCopyableTypeFunction(const NonCopyableType& v)
 
 class NonCopyableTypeEvent : public tikal::PayloadEvent<const NonCopyableType&> {};
 
-class ClassA {
+class ClassA
+{
 public:
 	ClassA()
 	{
@@ -53,7 +58,8 @@ public:
 	}
 };
 
-class ClassB {
+class ClassB
+{
 public:
 	ClassB(std::shared_ptr<ClassA> instanceA)
 	{
@@ -61,6 +67,36 @@ public:
 		instanceA->hello();
 	}
 };
+
+class BaseView : public tikal::View<BaseView>
+{
+public:
+	virtual void say() const = 0;
+};
+
+class ViewA : public BaseView
+{
+public:
+	void say() const override
+	{
+		std::cout << "Hello from ViewA" << std::endl;
+	}
+};
+
+class ViewB : public BaseView
+{
+public:
+	void say() const override
+	{
+		std::cout << "Hello from ViewB" << std::endl;
+	}
+};
+
+//class TestViewInstantiator : public tikal::ViewInstantiator<BaseView> {};
+
+typedef tikal::ViewInstantiator<BaseView> TestViewInstantiator;
+typedef tikal::SceneRoot<BaseView> TestSceneRoot;
+typedef tikal::SceneObject<BaseView> TestSceneObject;
 
 int main(int argc, char *argv[])
 {
@@ -94,7 +130,28 @@ int main(int argc, char *argv[])
 	builder.registerType<ClassA>().singleInstance();
 	builder.registerType<ClassB>().singleInstance();
 
+	builder.registerType<ViewA>();
+	builder.registerType<ViewB>();
+
 	auto container = builder.build();
 
 	auto instanceA = container->resolve<ClassB>();
+
+	auto viewInstantiator = TestViewInstantiator(container);
+
+	auto sceneRoot = TestSceneRoot(viewInstantiator);
+	auto object1 = sceneRoot.rootObject()->createChild();
+	auto viewA1 = object1->addView<ViewA>();
+
+	auto object2 = object1->createChild();
+	auto viewA2 = object2->addView<ViewA>();
+
+	auto object3 = object1->createChild();
+	auto viewB1 = object3->addView<ViewB>();
+
+	viewA1->say();
+	viewA2->say();
+	viewB1->say();
+
+	assert(object1 == viewA1->sceneObject());
 }
