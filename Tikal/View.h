@@ -1,5 +1,7 @@
 #pragma once
 
+//#include <iostream>
+
 namespace tikal
 {
 
@@ -12,7 +14,15 @@ class View
 	friend SceneObject<TBaseView>;
 
 public:
-	View() {}
+	View()
+	{
+		//std::cout << "View constructed" << std::endl;
+	}
+
+	virtual ~View()
+	{
+		//std::cout << "View destructed" << std::endl;
+	}
 
 	View(View const&) = delete;
 	void operator=(View const&) = delete;

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <algorithm>
+#include <functional>
+#include <iostream>
 #include <list>
 #include <memory>
 #include <stdexcept>
@@ -28,10 +30,14 @@ public:
 		m_viewInstantiator(viewInstantiator),
 		m_parent(nullptr),
 		m_active(true)
-	{}
+	{
+		std::cout << "SceneObject constructed" << std::endl;
+	}
 
 	~SceneObject()
-	{}
+	{
+		std::cout << "SceneObject destructed" << std::endl;
+	}
 
 	SceneObject(SceneObject const&) = delete;
 	void operator=(SceneObject const&) = delete;
@@ -111,6 +117,30 @@ public:
 		view->m_sceneObject = this;
 
 		return view;
+	}
+
+	bool active() const { return m_active; }
+	void setActive(bool active) { m_active = active; }
+
+	void applyToViews(std::function<void(TBaseView&)> function, bool applyToChildren, bool includeInactive)
+	{
+		if (!m_active && !includeInactive)
+		{
+			return;
+		}
+
+		for (auto& view : m_views)
+		{
+			function(*view);
+		}
+
+		if (applyToChildren)
+		{
+			for (auto& child : m_children)
+			{
+				child->applyToViews(function, applyToChildren, includeInactive);
+			}
+		}
 	}
 
 private:
