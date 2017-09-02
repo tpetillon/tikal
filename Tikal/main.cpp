@@ -76,8 +76,7 @@ public:
 class BaseView : public tikal::View<BaseView>
 {
 public:
-	BaseView(std::shared_ptr<tikal::EventDispatcher> eventDispatcher) :
-		tikal::View<BaseView>(eventDispatcher)
+	BaseView()
 	{
 		std::cout << "BaseView constructed" << std::endl;
 	}
@@ -93,8 +92,7 @@ public:
 class ViewA : public BaseView
 {
 public:
-	ViewA(std::shared_ptr<tikal::EventDispatcher> eventDispatcher) :
-		BaseView(eventDispatcher)
+	ViewA()
 	{
 		std::cout << "ViewA constructed" << std::endl;
 	}
@@ -113,11 +111,18 @@ public:
 class ViewB : public BaseView
 {
 public:
-	ViewB(std::shared_ptr<tikal::EventDispatcher> eventDispatcher, std::shared_ptr<ClassB> classB) :
-		BaseView(eventDispatcher)
+	ViewB(std::shared_ptr<ClassB> classB)
 	{
 		std::cout << "ViewB constructed" << std::endl;
+	}
 
+	~ViewB()
+	{
+		std::cout << "ViewB destructed" << std::endl;
+	}
+
+	void onAttached() override
+	{
 		//addEventListener<CharEvent>(std::bind(&ViewB::onCharEvent, this));
 
 		auto onChar = [=](char c)
@@ -127,9 +132,9 @@ public:
 		addEventListener<CharEvent>(onChar);
 	}
 
-	~ViewB()
+	void onDetached() override
 	{
-		std::cout << "ViewB destructed" << std::endl;
+		std::cout << "ViewB detached" << std::endl;
 	}
 
 	void say() const override
@@ -209,6 +214,8 @@ int main(int argc, char *argv[])
 	{
 		auto object3 = object2->createChild();
 		auto viewB1 = object3->addView<ViewB>();
+		//object3->removeView(viewB1);
+		//object3->removeView(viewA1);
 
 		ed->dispatchEvent<CharEvent>('T');
 	}
@@ -224,10 +231,12 @@ int main(int argc, char *argv[])
 
 	//object2->setActive(false);
 
+	std::cout << "applyToViews 1:" << std::endl;
 	sceneRoot.rootObject()->applyToViews(sayFunction, true, false);
 
 	object1->removeChild(object2);
 
+	std::cout << "applyToViews 2:" << std::endl;
 	sceneRoot.rootObject()->applyToViews(sayFunction, true, false);
 
 	ed->dispatchEvent<CharEvent>('T');

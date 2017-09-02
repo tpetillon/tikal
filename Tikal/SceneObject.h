@@ -36,6 +36,11 @@ public:
 
 	~SceneObject()
 	{
+		for (auto& view : m_views)
+		{
+			view->detach();
+		}
+
 		std::cout << "SceneObject destructed" << std::endl;
 	}
 
@@ -113,10 +118,31 @@ public:
 		auto view = m_viewInstantiator.instantiate<TView>();
 		m_views.push_back(view);
 
-		// This is ugly. It would be better if assisted injection was available.
-		view->m_sceneObject = this;
+		auto eventDispatcher = m_viewInstantiator.getEventDispatcher();
+		view->attach(this, eventDispatcher);
 
 		return view;
+	}
+
+	template<
+		typename TView
+	>
+	void removeView(std::shared_ptr<TView> view)
+	{
+		static_assert(std::is_base_of<TBaseView, TView>::value, "View type must inherit base view type");
+
+		auto position = std::find(m_views.begin(), m_views.end(), view);
+		if (position != m_views.end())
+		{
+			view->detach();
+			m_views.erase(position);
+		}
+		else
+		{
+			using namespace std::string_literals;
+
+			throw std::invalid_argument("The given view is not attached to this scene object"s);
+		}
 	}
 
 	bool active() const { return m_active; }

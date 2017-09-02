@@ -11,6 +11,8 @@ namespace tikal
 template<typename TBaseView>
 class View;
 
+// TODO use static_asserts instead of enable_if
+
 template<
 	typename TBaseView,
 	typename = std::enable_if_t<std::is_base_of<View<TBaseView>, TBaseView>::value>
@@ -29,6 +31,11 @@ public:
 	std::shared_ptr<TView> instantiate() const
 	{
 		return m_container->resolve<TView>();
+	}
+
+	std::shared_ptr<EventDispatcher> getEventDispatcher() const
+	{
+		return m_container->resolve<EventDispatcher>();
 	}
 
 private:
