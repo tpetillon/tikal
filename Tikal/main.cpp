@@ -76,7 +76,8 @@ public:
 class BaseView : public tikal::View<BaseView>
 {
 public:
-	BaseView()
+	BaseView(std::shared_ptr<tikal::EventDispatcher> eventDispatcher) :
+		tikal::View<BaseView>(eventDispatcher)
 	{
 		std::cout << "BaseView constructed" << std::endl;
 	}
@@ -92,7 +93,8 @@ public:
 class ViewA : public BaseView
 {
 public:
-	ViewA()
+	ViewA(std::shared_ptr<tikal::EventDispatcher> eventDispatcher) :
+		BaseView(eventDispatcher)
 	{
 		std::cout << "ViewA constructed" << std::endl;
 	}
@@ -111,9 +113,18 @@ public:
 class ViewB : public BaseView
 {
 public:
-	ViewB(std::shared_ptr<ClassB> classB)
+	ViewB(std::shared_ptr<tikal::EventDispatcher> eventDispatcher, std::shared_ptr<ClassB> classB) :
+		BaseView(eventDispatcher)
 	{
 		std::cout << "ViewB constructed" << std::endl;
+
+		//addEventListener<CharEvent>(std::bind(&ViewB::onCharEvent, this));
+
+		auto onChar = [=](char c)
+		{
+			this->onCharEvent(c);
+		};
+		addEventListener<CharEvent>(onChar);
 	}
 
 	~ViewB()
@@ -126,6 +137,11 @@ public:
 		std::cout << "Hello from ViewB" << std::endl;
 		std::cout << "\t";
 		m_classB->say();
+	}
+
+	void onCharEvent(const char& c)
+	{
+		std::cout << "Received char event in ViewB with payload " << c << std::endl;
 	}
 
 private:
@@ -149,23 +165,25 @@ int main(int argc, char *argv[])
 	f1();
 	f2(1, 2, 3);
 
-	tikal::EventDispatcher ed;
-	auto listenerRef1 = ed.addEventListener<CharEvent>(charFunction);
+	auto ed = std::make_shared<tikal::EventDispatcher>();
+	auto listenerRef1 = ed->addEventListener<CharEvent>(charFunction);
 
 	char c = 'K';
-	ed.dispatchEvent<CharEvent>(c);
+	ed->dispatchEvent<CharEvent>(c);
 
 	{
-		auto listnerRef2 = ed.addEventListener<NonCopyableTypeEvent>(nonCopyableTypeFunction);
+		auto listenerRef2 = ed->addEventListener<NonCopyableTypeEvent>(nonCopyableTypeFunction);
 	}
 
 	NonCopyableType v(64);
-	ed.dispatchEvent<NonCopyableTypeEvent>(v);
+	ed->dispatchEvent<NonCopyableTypeEvent>(v);
 
-	ed.addEventListener<VoidEvent>(voidFunction);
-	ed.dispatchEvent<VoidEvent>();
+	ed->addEventListener<VoidEvent>(voidFunction);
+	ed->dispatchEvent<VoidEvent>();
 
 	Hypodermic::ContainerBuilder builder;
+
+	builder.registerInstance<tikal::EventDispatcher>(ed);
 
 	builder.registerType<ClassA>().singleInstance();
 	builder.registerType<ClassB>().singleInstance();
@@ -191,6 +209,8 @@ int main(int argc, char *argv[])
 	{
 		auto object3 = object2->createChild();
 		auto viewB1 = object3->addView<ViewB>();
+
+		ed->dispatchEvent<CharEvent>('T');
 	}
 
 	//viewA1->say();
@@ -209,4 +229,6 @@ int main(int argc, char *argv[])
 	object1->removeChild(object2);
 
 	sceneRoot.rootObject()->applyToViews(sayFunction, true, false);
+
+	ed->dispatchEvent<CharEvent>('T');
 }

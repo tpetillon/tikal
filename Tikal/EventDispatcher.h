@@ -37,6 +37,7 @@ private:
 		TFunction m_function;
 	};
 
+public:
 	struct ListenerReference
 	{
 		ListenerReference(EventDispatcher* m_eventDispatcher, ctti::type_id_t eventTypeId, FunctionHolder* functionHolder) :
@@ -57,7 +58,6 @@ private:
 		FunctionHolder* m_functionHolder;
 	};
 
-public:
 	template<
 		typename TEvent,
 		typename = std::enable_if_t<is_base_of_template<TEvent, PayloadEvent>::value>
