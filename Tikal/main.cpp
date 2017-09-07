@@ -3,12 +3,13 @@
 
 #include <Hypodermic/ContainerBuilder.h>
 
+#include "Component.h"
+#include "ComponentContainerBuilder.h"
+#include "ComponentInstantiator.h"
 #include "EventDispatcher.h"
 #include "SceneObject.h"
 #include "SceneRoot.h"
 #include "TestEvents.h"
-#include "View.h"
-#include "ViewInstantiator.h"
 
 void voidFunction()
 {
@@ -61,7 +62,7 @@ public:
 class ClassB
 {
 public:
-	ClassB(std::shared_ptr<ClassA> instanceA)
+	ClassB(std::shared_ptr<ClassA> instanceA) : m_instanceA(instanceA)
 	{
 		std::cout << "ClassB constructor" << std::endl;
 		instanceA->hello();
@@ -70,10 +71,14 @@ public:
 	void say()
 	{
 		std::cout << "Hello from ClassB" << std::endl;
+		m_instanceA->hello();
 	}
+
+private:
+	std::shared_ptr<ClassA> m_instanceA;
 };
 
-class BaseView : public tikal::View<BaseView>
+/*class BaseView : public tikal::View<BaseView>
 {
 public:
 	BaseView()
@@ -151,13 +156,43 @@ public:
 
 private:
 	std::shared_ptr<ClassB> m_classB;
+};*/
+
+class ComponentA : public tikal::Component
+{
+public:
+	ComponentA(std::shared_ptr<ClassB> bInstance) :
+		m_bInstance(bInstance), m_value(12345789)
+	{
+		std::cout << "ComponentA constructed" << std::endl;
+	}
+
+	~ComponentA()
+	{
+		std::cout << "ComponentA destructed" << std::endl;
+	}
+
+	Hypodermic::TypeInfo type() const override
+	{
+		return Hypodermic::Utils::getMetaTypeInfo<ComponentA>();
+	}
+
+	void say() const
+	{
+		std::cout << "Hello from ComponentA" << std::endl;
+		m_bInstance->say();
+	}
+
+private:
+	std::shared_ptr<ClassB> m_bInstance;
+	int m_value;
 };
 
 //class TestViewInstantiator : public tikal::ViewInstantiator<BaseView> {};
 
-typedef tikal::ViewInstantiator<BaseView> TestViewInstantiator;
+/*typedef tikal::ViewInstantiator<BaseView> TestViewInstantiator;
 typedef tikal::SceneRoot<BaseView> TestSceneRoot;
-typedef tikal::SceneObject<BaseView> TestSceneObject;
+typedef tikal::SceneObject<BaseView> TestSceneObject;*/
 
 int main(int argc, char *argv[])
 {
@@ -193,14 +228,14 @@ int main(int argc, char *argv[])
 	builder.registerType<ClassA>().singleInstance();
 	builder.registerType<ClassB>().singleInstance();
 
-	builder.registerType<ViewA>();
-	builder.registerType<ViewB>();
+	//builder.registerType<ViewA>();
+	//builder.registerType<ViewB>();
 
 	auto container = builder.build();
 
 	auto instanceA = container->resolve<ClassB>();
 
-	auto viewInstantiator = TestViewInstantiator(container);
+	/*auto viewInstantiator = TestViewInstantiator(container);
 
 	auto sceneRoot = TestSceneRoot(viewInstantiator);
 
@@ -239,5 +274,22 @@ int main(int argc, char *argv[])
 	std::cout << "applyToViews 2:" << std::endl;
 	sceneRoot.rootObject()->applyToViews(sayFunction, true, false);
 
-	ed->dispatchEvent<CharEvent>('T');
+	ed->dispatchEvent<CharEvent>('T');*/
+
+	tikal::ComponentContainerBuilder componentContainerBuilder;
+	componentContainerBuilder.registerComponent<ComponentA>();
+	auto componentContainer = componentContainerBuilder.build(container);
+
+	/*auto placement = ::operator new(sizeof(ComponentA));
+
+	auto componentA = componentContainer->instantiateComponent<ComponentA>(placement);
+	componentA->say();*/
+
+	auto componentRepo = std::make_shared<tikal::ComponentRepository>(32 * 1024);
+	auto componentInstantiator = std::make_shared<tikal::ComponentInstantiator>(componentContainer, componentRepo);
+
+	auto sceneRoot = tikal::SceneRoot(componentInstantiator);
+	auto sceneObject = sceneRoot.createSceneObject();
+	auto componentA = sceneObject->addComponent<ComponentA>();
+	componentA->say();
 }
