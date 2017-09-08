@@ -276,22 +276,24 @@ int main(int argc, char *argv[])
 
 	ed->dispatchEvent<CharEvent>('T');*/
 
-	tikal::ComponentContainerBuilder componentContainerBuilder;
-	componentContainerBuilder.registerComponent<ComponentA>();
-	auto componentContainer = componentContainerBuilder.build(container);
+	{
+		tikal::ComponentContainerBuilder componentContainerBuilder;
+		componentContainerBuilder.registerComponent<ComponentA>();
+		auto componentContainer = componentContainerBuilder.build(container);
 
-	/*auto placement = ::operator new(sizeof(ComponentA));
+		/*auto placement = ::operator new(sizeof(ComponentA));
 
-	auto componentA = componentContainer->instantiateComponent<ComponentA>(placement);
-	componentA->say();*/
+		auto componentA = componentContainer->instantiateComponent<ComponentA>(placement);
+		componentA->say();*/
 
-	auto componentRepo = std::make_shared<tikal::ComponentRepository>();
-	auto componentInstantiator = std::make_shared<tikal::ComponentInstantiator>(componentContainer, componentRepo);
+		auto componentRepo = std::make_shared<tikal::ComponentRepository>();
+		auto componentInstantiator = std::make_shared<tikal::ComponentInstantiator>(componentContainer, componentRepo);
 
-	auto sceneRoot = tikal::SceneRoot(componentInstantiator);
-	auto sceneObject = sceneRoot.createSceneObject();
-	auto componentA = sceneObject->addComponent<ComponentA>();
-	componentA->say();
+		auto sceneRoot = tikal::SceneRoot(componentInstantiator);
+		auto sceneObject = sceneRoot.createSceneObject();
+		auto componentA = sceneObject->addComponent<ComponentA>();
+		componentA->say();
+	}
 
 	tikal::ObjectPool pool(sizeof(int), sizeof(int) * 3);
 	std::cout << "object count: " << pool.objectCount() << ", block count: " << pool.blockCount() << std::endl;

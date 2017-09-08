@@ -10,7 +10,11 @@ SceneRoot::SceneRoot(std::shared_ptr<ComponentInstantiator> componentInstantiato
 
 SceneRoot::~SceneRoot()
 {
-	// TODO delete all sceneObjects
+	for (auto location : m_pool)
+	{
+		(static_cast<SceneObject*>(location))->~SceneObject();
+		m_pool.freeLocation(location);
+	}
 }
 
 SceneObject* SceneRoot::createSceneObject()
