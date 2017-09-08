@@ -285,11 +285,67 @@ int main(int argc, char *argv[])
 	auto componentA = componentContainer->instantiateComponent<ComponentA>(placement);
 	componentA->say();*/
 
-	auto componentRepo = std::make_shared<tikal::ComponentRepository>(32 * 1024);
+	auto componentRepo = std::make_shared<tikal::ComponentRepository>();
 	auto componentInstantiator = std::make_shared<tikal::ComponentInstantiator>(componentContainer, componentRepo);
 
 	auto sceneRoot = tikal::SceneRoot(componentInstantiator);
 	auto sceneObject = sceneRoot.createSceneObject();
 	auto componentA = sceneObject->addComponent<ComponentA>();
 	componentA->say();
+
+	tikal::ObjectPool pool(sizeof(int), sizeof(int) * 3);
+	std::cout << "object count: " << pool.objectCount() << ", block count: " << pool.blockCount() << std::endl;
+	for (int i = 0; i < 10; i++)
+	{
+		auto location = pool.reserveLocation();
+		new (location) int(i);
+	}
+	for (auto location : pool)
+	{
+		std::cout << *static_cast<int*>(location) << " ";
+	}
+	std::cout << std::endl;
+	std::cout << "object count: " << pool.objectCount() << ", block count: " << pool.blockCount() << std::endl;
+	int l = 0;
+	for (auto location : pool)
+	{
+		if (l % 2 == 0) pool.freeLocation(location);
+		l++;
+	}
+	for (auto location : pool)
+	{
+		std::cout << *static_cast<int*>(location) << " ";
+	}
+	std::cout << std::endl;
+	std::cout << "object count: " << pool.objectCount() << ", block count: " << pool.blockCount() << std::endl;
+	for (int i = 0; i < 10; i++)
+	{
+		auto location = pool.reserveLocation();
+		new (location) int(100 + i);
+	}
+	for (auto location : pool)
+	{
+		std::cout << *static_cast<int*>(location) << " ";
+	}
+	std::cout << std::endl;
+	std::cout << "object count: " << pool.objectCount() << ", block count: " << pool.blockCount() << std::endl;
+	for (auto location : pool)
+	{
+		//std::cout << "free location " << *(static_cast<int*>(location)) << std::endl;
+		pool.freeLocation(location);
+	}
+	for (auto location : pool)
+	{
+		std::cout << *static_cast<int*>(location) << " ";
+	}
+	std::cout << std::endl;
+	std::cout << "object count: " << pool.objectCount() << ", block count: " << pool.blockCount() << std::endl;
+	//for (auto location : pool)
+	for (auto it = pool.begin(); it != pool.end(); ++it)
+	//for (auto it = pool.rbegin(); it != pool.rend(); --it)
+	{
+		auto location = *it;
+		std::cout << *static_cast<int*>(location) << " ";
+	}
+	std::cout << std::endl;
 }
