@@ -12,6 +12,8 @@
 namespace tikal
 {
 
+class SceneObject;
+
 class ComponentContainer
 {
 public:
@@ -19,13 +21,13 @@ public:
 		std::shared_ptr<Hypodermic::Container> container,
 		std::list<std::shared_ptr<ComponentRegistration>> registrations);
 
-	void* instantiateComponent(Hypodermic::TypeInfo type, void* const placement);
+	void* instantiateComponent(Hypodermic::TypeInfo type, void* const placement, SceneObject* sceneObject);
 
 	template<typename T>
-	T* instantiateComponent(void* const placement)
+	T* instantiateComponent(void* const placement, SceneObject* sceneObject)
 	{
 		auto type = Hypodermic::Utils::getMetaTypeInfo<T>();
-		return static_cast<T*>(instantiateComponent(type, placement));
+		return static_cast<T*>(instantiateComponent(type, placement, sceneObject));
 	}
 
 private:

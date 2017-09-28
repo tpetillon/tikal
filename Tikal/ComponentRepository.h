@@ -14,6 +14,7 @@ namespace tikal
 {
 
 class Component;
+class SceneObject;
 
 class ComponentRepository
 {
@@ -21,7 +22,7 @@ public:
 	ComponentRepository();
 
 	template<typename TComponent>
-	TComponent* createComponent(std::shared_ptr<ComponentContainer> container)
+	TComponent* createComponent(std::shared_ptr<ComponentContainer> container, SceneObject* sceneObject)
 	{
 		static_assert(std::is_base_of<Component, TComponent>::value, "Type must derive from Component");
 
@@ -29,7 +30,7 @@ public:
 		auto& pool = getOrCreatePool(type, sizeof(TComponent), 32 * 1024); // TODO get pool size from... somewhere
 		auto location = pool->reserveLocation();
 
-		return container->instantiateComponent<TComponent>(location);
+		return container->instantiateComponent<TComponent>(location, sceneObject);
 	}
 
 	void destroyComponent(Component* component);

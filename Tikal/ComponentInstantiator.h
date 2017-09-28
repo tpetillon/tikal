@@ -13,6 +13,8 @@ class Container;
 namespace tikal
 {
 
+class SceneObject;
+
 class ComponentInstantiator
 {
 public:
@@ -21,11 +23,11 @@ public:
 		std::shared_ptr<ComponentRepository> m_componentRepository);
 
 	template<typename TComponent>
-	TComponent* instantiate()
+	TComponent* instantiate(SceneObject* sceneObject)
 	{
 		static_assert(std::is_base_of<Component, TComponent>::value, "TComponent must derive from Component");
 
-		return m_componentRepository->createComponent<TComponent>(m_container);
+		return m_componentRepository->createComponent<TComponent>(m_container, sceneObject);
 	}
 
 	void destroy(Component* component);

@@ -21,6 +21,8 @@ class Container;
 namespace tikal
 {
 
+class SceneObject;
+
 class ComponentContainerBuilder
 {
 public:
@@ -30,13 +32,14 @@ public:
 		static_assert(std::is_base_of<Component, TComponent>::value, "TComponent must derive from Component");
 		static_assert(Hypodermic::Traits::IsComplete<TComponent>::value, "TComponent should be a complete type");
 
+		static_assert(std::is_constructible< SceneObject* >::value, "!constructible");
 		auto&& factory = Traits::ComponentConstructorDescriptor<TComponent>::describe();
 
 		m_registrations.push_back(std::make_shared<ComponentRegistration>(
 			Hypodermic::Utils::getMetaTypeInfo<TComponent>(),
-			[factory](Hypodermic::Container& container, void* const placement)
+			[factory](Hypodermic::Container& container, void* const placement, SceneObject* sceneObject)
 			{
-				return static_cast<void*>(factory(container, placement));
+				return static_cast<void*>(factory(container, placement, sceneObject));
 			}
 		));
 	}

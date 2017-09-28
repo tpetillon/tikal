@@ -21,7 +21,7 @@ ComponentContainer::ComponentContainer(
 }
 
 void* ComponentContainer::instantiateComponent(
-	Hypodermic::TypeInfo type, void* const placement)
+	Hypodermic::TypeInfo type, void* const placement, SceneObject* sceneObject)
 {
 	auto it = m_registrations.find(type);
 
@@ -31,7 +31,7 @@ void* ComponentContainer::instantiateComponent(
 		throw std::invalid_argument("Component type not registered"s);
 	}
 
-	return (it->second->factory())(*(m_container.get()), placement);
+	return (it->second->factory())(*(m_container.get()), placement, sceneObject);
 }
 
 }

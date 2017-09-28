@@ -161,7 +161,11 @@ private:
 class ComponentA : public tikal::Component
 {
 public:
-	ComponentA(std::shared_ptr<ClassB> bInstance) :
+
+	ComponentA() = delete;
+
+	ComponentA(tikal::SceneObject* sceneObject, std::shared_ptr<ClassB> bInstance) :
+		tikal::Component(sceneObject),
 		m_bInstance(bInstance), m_value(12345789)
 	{
 		std::cout << "ComponentA constructed" << std::endl;
@@ -277,6 +281,7 @@ int main(int argc, char *argv[])
 	ed->dispatchEvent<CharEvent>('T');*/
 
 	{
+		//static_assert(std::is_constructible<ComponentA*>::value, "ComponentA !constructible");
 		tikal::ComponentContainerBuilder componentContainerBuilder;
 		componentContainerBuilder.registerComponent<ComponentA>();
 		auto componentContainer = componentContainerBuilder.build(container);

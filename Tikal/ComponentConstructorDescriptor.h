@@ -5,14 +5,16 @@
 #include <type_traits>
 
 #include <Hypodermic/ArgumentPack.h>
-#include <Hypodermic/ConstructorTypologyDeducer.h>
 #include <Hypodermic/Container.h>
 #include <Hypodermic/IsSupportedArgument.h>
 
 #include "ComponentArgumentResolver.h"
+#include "ComponentConstructorTypologyDeducer.h"
 
 namespace tikal
 {
+
+class SceneObject;
 
 namespace Traits
 {
@@ -42,15 +44,14 @@ namespace Traits
 		template <class T, class TArgumentPack>
 		struct ComponentConstructorDescriptor;
 
-
 		template <class T>
 		struct ComponentConstructorDescriptor< T, Hypodermic::Utils::ArgumentPack<> >
 		{
-			static std::function< T* (Hypodermic::Container&, void* const) > describe()
+			static std::function< T* (Hypodermic::Container&, void* const, SceneObject*) > describe()
 			{
-				return [](Hypodermic::Container& container, void* const placement)
+				return [](Hypodermic::Container& container, void* const placement, SceneObject* sceneObject)
 				{
-					return new (placement) T ();
+					return new (placement) T (sceneObject);
 				};
 			}
 		};
@@ -59,11 +60,11 @@ namespace Traits
 		template <class T, class... TAnyArgument>
 		struct ComponentConstructorDescriptor< T, Hypodermic::Utils::ArgumentPack< TAnyArgument... > >
 		{
-			static std::function< T* (Hypodermic::Container&, void* const) > describe()
+			static std::function< T* (Hypodermic::Container&, void* const, SceneObject*) > describe()
 			{
-				return [](Hypodermic::Container& container, void* const placement)
+				return [](Hypodermic::Container& container, void* const placement, SceneObject* sceneObject)
 				{
-					return new (placement) T (ComponentArgumentResolverInvoker< typename TAnyArgument::Type >(container)...);
+					return new (placement) T (sceneObject, ComponentArgumentResolverInvoker< typename TAnyArgument::Type >(container)...);
 				};
 			}
 		};
@@ -72,7 +73,7 @@ namespace Traits
 
 
 	template <class T>
-	using ComponentConstructorDescriptor = Details::ComponentConstructorDescriptor< T, Hypodermic::Traits::ConstructorTypologyDeducer< T > >;
+	using ComponentConstructorDescriptor = Details::ComponentConstructorDescriptor< T, Traits::ComponentConstructorTypologyDeducer< T > >;
 
 	} // namespace Traits
 

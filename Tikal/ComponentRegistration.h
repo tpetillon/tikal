@@ -12,12 +12,14 @@ class Container;
 namespace tikal
 {
 
+class SceneObject;
+
 class ComponentRegistration
 {
 public:
 	ComponentRegistration(
 		Hypodermic::TypeInfo instanceType,
-		std::function<void*(Hypodermic::Container&, void* const)> factory) :
+		std::function<void*(Hypodermic::Container&, void* const, SceneObject*)> factory) :
 		m_instanceType(instanceType), m_factory(factory)
 	{}
 
@@ -26,14 +28,14 @@ public:
 		return m_instanceType;
 	}
 
-	std::function<void*(Hypodermic::Container&, void* const)> factory() const
+	std::function<void*(Hypodermic::Container&, void* const, SceneObject*)> factory() const
 	{
 		return m_factory;
 	}
 
 private:
 	Hypodermic::TypeInfo m_instanceType;
-	std::function<void*(Hypodermic::Container&, void* const)> m_factory;
+	std::function<void*(Hypodermic::Container&, void* const, SceneObject*)> m_factory;
 };
 
 }

@@ -29,8 +29,7 @@ public:
 	{
 		static_assert(std::is_base_of<Component, TComponent>::value, "Type must derive from Component");
 
-		auto component = m_componentInstantiator->instantiate<TComponent>();
-		component->attach(this);
+		auto component = m_componentInstantiator->instantiate<TComponent>(this);
 
 		auto type = Hypodermic::Utils::getMetaTypeInfo<TComponent>();
 		m_components[type] = static_cast<Component*>(component);
