@@ -12,7 +12,7 @@ class SceneObject;
 class Component : public Destroyable
 {
 public:
-	Component(SceneObject* sceneObject) : m_sceneObject(sceneObject) {}
+	Component(SceneObject* const sceneObject) : m_sceneObject(sceneObject) {}
 
 	virtual Hypodermic::TypeInfo type() const = 0;
 

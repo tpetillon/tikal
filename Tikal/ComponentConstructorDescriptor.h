@@ -47,9 +47,9 @@ namespace Traits
 		template <class T>
 		struct ComponentConstructorDescriptor< T, Hypodermic::Utils::ArgumentPack<> >
 		{
-			static std::function< T* (Hypodermic::Container&, void* const, SceneObject*) > describe()
+			static std::function< T* (Hypodermic::Container&, void* const, SceneObject* const) > describe()
 			{
-				return [](Hypodermic::Container& container, void* const placement, SceneObject* sceneObject)
+				return [](Hypodermic::Container& container, void* const placement, SceneObject* const sceneObject)
 				{
 					return new (placement) T (sceneObject);
 				};
@@ -60,9 +60,9 @@ namespace Traits
 		template <class T, class... TAnyArgument>
 		struct ComponentConstructorDescriptor< T, Hypodermic::Utils::ArgumentPack< TAnyArgument... > >
 		{
-			static std::function< T* (Hypodermic::Container&, void* const, SceneObject*) > describe()
+			static std::function< T* (Hypodermic::Container&, void* const, SceneObject* const) > describe()
 			{
-				return [](Hypodermic::Container& container, void* const placement, SceneObject* sceneObject)
+				return [](Hypodermic::Container& container, void* const placement, SceneObject* const sceneObject)
 				{
 					return new (placement) T (sceneObject, ComponentArgumentResolverInvoker< typename TAnyArgument::Type >(container)...);
 				};
@@ -75,6 +75,6 @@ namespace Traits
 	template <class T>
 	using ComponentConstructorDescriptor = Details::ComponentConstructorDescriptor< T, Traits::ComponentConstructorTypologyDeducer< T > >;
 
-	} // namespace Traits
+} // namespace Traits
 
 }

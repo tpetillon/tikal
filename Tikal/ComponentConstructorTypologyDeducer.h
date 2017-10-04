@@ -44,7 +44,7 @@ namespace Traits
 			<
 			T,
 			Hypodermic::Utils::IntegerSequence<>,
-			typename std::enable_if< std::is_constructible< T, SceneObject* >::value >::type
+			typename std::enable_if< std::is_constructible< T, SceneObject* const >::value >::type
 				> : Hypodermic::Utils::ArgumentPack<>
 		{};
 
@@ -53,7 +53,7 @@ namespace Traits
 			<
 			T,
 			Hypodermic::Utils::IntegerSequence<>,
-			typename std::enable_if< !std::is_constructible< T, SceneObject* >::value >::type
+			typename std::enable_if< !std::is_constructible< T, SceneObject* const >::value >::type
 			> : ComponentConstructorTypologyDeducer< T, Hypodermic::Utils::MakeIntegerSequence< 1 > >::Type
 		{};
 
@@ -67,7 +67,7 @@ namespace Traits
 			typename std::enable_if
 			<
 			(Cardinality< NthArgument... >::value > 0 && Cardinality< NthArgument... >::value < HYPODERMIC_CONSTRUCTOR_ARGUMENT_COUNT) &&
-			std::is_constructible< T, SceneObject*, WrapAndGet< T, NthArgument >... >::value
+			std::is_constructible< T, SceneObject* const, WrapAndGet< T, NthArgument >... >::value
 			>::type
 				> : Hypodermic::Utils::ArgumentPack< WrapAndGet< T, NthArgument >... >
 		{};
@@ -80,7 +80,7 @@ namespace Traits
 			typename std::enable_if
 			<
 			(Cardinality< NthArgument... >::value > 0 && Cardinality< NthArgument... >::value < HYPODERMIC_CONSTRUCTOR_ARGUMENT_COUNT) &&
-			!std::is_constructible< T, SceneObject*, WrapAndGet< T, NthArgument >... >::value
+			!std::is_constructible< T, SceneObject* const, WrapAndGet< T, NthArgument >... >::value
 			>::type
 			> : ComponentConstructorTypologyDeducer< T, Hypodermic::Utils::MakeIntegerSequence< sizeof...(NthArgument)+1 > >::Type
 		{};
@@ -92,7 +92,7 @@ namespace Traits
 			<
 			T,
 			Hypodermic::Utils::IntegerSequence< NthArgument... >,
-			typename std::enable_if< (Cardinality< NthArgument... >::value == HYPODERMIC_CONSTRUCTOR_ARGUMENT_COUNT) && std::is_constructible< T, SceneObject*, WrapAndGet< T, NthArgument >... >::value >::type
+			typename std::enable_if< (Cardinality< NthArgument... >::value == HYPODERMIC_CONSTRUCTOR_ARGUMENT_COUNT) && std::is_constructible< T, SceneObject* const, WrapAndGet< T, NthArgument >... >::value >::type
 				> : Hypodermic::Utils::ArgumentPack< WrapAndGet< T, NthArgument >... >
 		{};
 
@@ -101,8 +101,8 @@ namespace Traits
 			<
 			T,
 			Hypodermic::Utils::IntegerSequence< NthArgument... >,
-			typename std::enable_if< (Cardinality< NthArgument... >::value == HYPODERMIC_CONSTRUCTOR_ARGUMENT_COUNT) && !std::is_constructible< T, SceneObject*, WrapAndGet< T, NthArgument >... >::value >::type
-			> : ConstructorTypologyNotSupported
+			typename std::enable_if< (Cardinality< NthArgument... >::value == HYPODERMIC_CONSTRUCTOR_ARGUMENT_COUNT) && !std::is_constructible< T, SceneObject* const, WrapAndGet< T, NthArgument >... >::value >::type
+			> : ComponentConstructorTypologyNotSupported
 		{};
 
 	} // namespace Details
