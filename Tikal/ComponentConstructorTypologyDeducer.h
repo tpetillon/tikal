@@ -2,11 +2,11 @@
 
 #include <type_traits>
 
-#include "Hypodermic/AnyArgument.h"
 #include "Hypodermic/ArgumentPack.h"
 #include "Hypodermic/Config.h"
 #include "Hypodermic/IntegerSequence.h"
 
+#include "TemplateHelpers.h"
 
 namespace tikal
 {
@@ -16,23 +16,14 @@ class SceneObject;
 namespace Traits
 {
 
-	struct ConstructorTypologyNotSupported
+	struct ComponentConstructorTypologyNotSupported
 	{
-		typedef ConstructorTypologyNotSupported Type;
+		typedef ComponentConstructorTypologyNotSupported Type;
 	};
 
 
 	namespace Details
 	{
-
-		template <int... N>
-		struct Cardinality
-		{
-			static const int value = sizeof...(N);
-		};
-
-		template <class T, int>
-		struct WrapAndGet : Hypodermic::Traits::AnyArgument< T > {};
 
 		template <class, class, class = void>
 		struct ComponentConstructorTypologyDeducer;

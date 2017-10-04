@@ -6,3 +6,5 @@
 class VoidEvent : public tikal::Event {};
 
 class CharEvent : public tikal::PayloadEvent<const char&> {};
+
+class IntEvent : public tikal::PayloadEvent<const int&> {};

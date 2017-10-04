@@ -1,8 +1,10 @@
 #include <functional>
 #include <iostream>
+#include <string>
 
 #include <Hypodermic/ContainerBuilder.h>
 
+#include "CommandBinder.h"
 #include "Component.h"
 #include "ComponentContainerBuilder.h"
 #include "ComponentInstantiator.h"
@@ -77,6 +79,12 @@ public:
 private:
 	std::shared_ptr<ClassA> m_instanceA;
 };
+
+void intClassACommand(const int& i, std::shared_ptr<ClassA> instanceA)
+{
+	std::cout << "intClassACommand " << i << std::endl;
+	instanceA->hello();
+}
 
 /*class BaseView : public tikal::View<BaseView>
 {
@@ -197,6 +205,14 @@ private:
 /*typedef tikal::ViewInstantiator<BaseView> TestViewInstantiator;
 typedef tikal::SceneRoot<BaseView> TestSceneRoot;
 typedef tikal::SceneObject<BaseView> TestSceneObject;*/
+
+class StringEvent : public tikal::PayloadEvent<const std::string&> {};
+
+void voidFunction2(std::shared_ptr<ClassB> instanceB)
+{
+	std::cout << "void" << std::endl;
+	instanceB->say();
+}
 
 int main(int argc, char *argv[])
 {
@@ -355,4 +371,22 @@ int main(int argc, char *argv[])
 		std::cout << *static_cast<int*>(location) << " ";
 	}
 	std::cout << std::endl;
+
+	tikal::CommandBinder commandBinder(ed, container);
+	commandBinder.bindCommand<IntEvent>(intClassACommand);
+	auto lambda = [](int i, std::shared_ptr<ClassA> classA)
+	{
+		std::cout << "lambda: " << i << std::endl;
+		classA->hello();
+	};
+	auto function = std::function<void(int, std::shared_ptr<ClassA>)>(lambda);
+	commandBinder.bindCommand<CharEvent>(function);
+	commandBinder.bindCommand<NonCopyableTypeEvent>(nonCopyableTypeFunction);
+	ed->dispatchEvent<IntEvent>(42);
+	ed->dispatchEvent<NonCopyableTypeEvent>(v);
+	ed->dispatchEvent<CharEvent>('a');
+
+	commandBinder.bindCommand<VoidEvent>(voidFunction);
+	commandBinder.bindCommand<VoidEvent>(voidFunction2);
+	ed->dispatchEvent<VoidEvent>();
 }
