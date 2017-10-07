@@ -37,7 +37,7 @@ public:
 
 		m_registrations.push_back(std::make_shared<ComponentRegistration>(
 			Hypodermic::Utils::getMetaTypeInfo<TComponent>(),
-			[factory](Hypodermic::Container& container, void* const placement, SceneObject* sceneObject)
+			[factory](Hypodermic::Container* container, void* const placement, SceneObject* sceneObject)
 			{
 				return static_cast<void*>(factory(container, placement, sceneObject));
 			}

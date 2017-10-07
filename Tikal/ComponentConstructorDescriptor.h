@@ -25,7 +25,7 @@ namespace Traits
 		template <class TParent>
 		struct ComponentArgumentResolverInvoker
 		{
-			explicit ComponentArgumentResolverInvoker(Hypodermic::Container& container)
+			explicit ComponentArgumentResolverInvoker(Hypodermic::Container* container)
 				: m_container(container)
 			{
 			}
@@ -37,7 +37,7 @@ namespace Traits
 			}
 
 		private:
-			Hypodermic::Container& m_container;
+			Hypodermic::Container* m_container;
 		};
 
 
@@ -47,9 +47,9 @@ namespace Traits
 		template <class T>
 		struct ComponentConstructorDescriptor< T, Hypodermic::Utils::ArgumentPack<> >
 		{
-			static std::function< T* (Hypodermic::Container&, void* const, SceneObject* const) > describe()
+			static std::function< T* (Hypodermic::Container*, void* const, SceneObject* const) > describe()
 			{
-				return [](Hypodermic::Container& container, void* const placement, SceneObject* const sceneObject)
+				return [](Hypodermic::Container* container, void* const placement, SceneObject* const sceneObject)
 				{
 					return new (placement) T (sceneObject);
 				};
@@ -60,9 +60,9 @@ namespace Traits
 		template <class T, class... TAnyArgument>
 		struct ComponentConstructorDescriptor< T, Hypodermic::Utils::ArgumentPack< TAnyArgument... > >
 		{
-			static std::function< T* (Hypodermic::Container&, void* const, SceneObject* const) > describe()
+			static std::function< T* (Hypodermic::Container*, void* const, SceneObject* const) > describe()
 			{
-				return [](Hypodermic::Container& container, void* const placement, SceneObject* const sceneObject)
+				return [](Hypodermic::Container* container, void* const placement, SceneObject* const sceneObject)
 				{
 					return new (placement) T (sceneObject, ComponentArgumentResolverInvoker< typename TAnyArgument::Type >(container)...);
 				};

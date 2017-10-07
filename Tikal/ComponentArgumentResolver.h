@@ -23,11 +23,11 @@ namespace Traits
 	{
 		typedef std::shared_ptr< TArg > Type;
 
-		static Type resolve(Hypodermic::Container& container)
+		static Type resolve(Hypodermic::Container* container)
 		{
 			static_assert(Hypodermic::Traits::IsComplete< TArg >::value, "TArg should be a complete type");
 
-			return container.resolve< TArg >();
+			return container->resolve< TArg >();
 		}
 	};
 

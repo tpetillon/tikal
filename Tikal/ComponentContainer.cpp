@@ -31,7 +31,7 @@ void* ComponentContainer::instantiateComponent(
 		throw std::invalid_argument("Component type not registered"s);
 	}
 
-	return (it->second->factory())(*(m_container.get()), placement, sceneObject);
+	return (it->second->factory())(m_container.get(), placement, sceneObject);
 }
 
 }

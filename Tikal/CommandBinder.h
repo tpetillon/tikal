@@ -46,7 +46,7 @@ public:
 		auto&& factory = Traits::CommandDescriptor<void(TPayload, TDeps...), typename TEvent::payload>::describe();
 
 		m_listenerReferences.push_back(m_eventDispatcher->addEventListener<TEvent>([=](typename TEvent::payload payload) {
-			factory(command, *(m_container.get()))(payload);
+			factory(command, m_container.get())(payload);
 		}));
 	}
 
@@ -64,7 +64,7 @@ public:
 		auto&& factory = Traits::CommandDescriptor<void(TDeps...), void>::describe();
 
 		m_listenerReferences.push_back(m_eventDispatcher->addEventListener<TEvent>([=]() {
-			factory(command, *(m_container.get()))();
+			factory(command, m_container.get())();
 		}));
 	}
 

@@ -25,7 +25,7 @@ namespace Traits
 		template <class TParent>
 		struct CommandArgumentResolverInvoker
 		{
-			explicit CommandArgumentResolverInvoker(Hypodermic::Container& container)
+			explicit CommandArgumentResolverInvoker(Hypodermic::Container* container)
 				: m_container(container)
 			{
 			}
@@ -37,7 +37,7 @@ namespace Traits
 			}
 
 		private:
-			Hypodermic::Container& m_container;
+			Hypodermic::Container* m_container;
 		};
 
 
@@ -47,11 +47,11 @@ namespace Traits
 		template <class TCommand>
 		struct CommandDescriptor< TCommand, void, Hypodermic::Utils::ArgumentPack<> >
 		{
-			static std::function< std::function<void()>(std::function<TCommand>, Hypodermic::Container&) > describe()
+			static std::function< std::function<void()>(std::function<TCommand>, Hypodermic::Container*) > describe()
 			{
-				return [](std::function<TCommand> command, Hypodermic::Container& container)
+				return [](std::function<TCommand> command, Hypodermic::Container* container)
 				{
-					return [command, &container]() {
+					return [command, container]() {
 						command();
 					};
 				};
@@ -61,11 +61,11 @@ namespace Traits
 		template <class TCommand, class TPayload>
 		struct CommandDescriptor< TCommand, TPayload, Hypodermic::Utils::ArgumentPack<> >
 		{
-			static std::function< std::function<void(TPayload)>(std::function<TCommand>, Hypodermic::Container&) > describe()
+			static std::function< std::function<void(TPayload)>(std::function<TCommand>, Hypodermic::Container*) > describe()
 			{
-				return [](std::function<TCommand> command, Hypodermic::Container& container)
+				return [](std::function<TCommand> command, Hypodermic::Container* container)
 				{
-					return [command, &container](TPayload payload) {
+					return [command, container](TPayload payload) {
 						command(payload);
 					};
 				};
@@ -76,11 +76,11 @@ namespace Traits
 		template <class TCommand, class... TAnyArgument>
 		struct CommandDescriptor< TCommand, void, Hypodermic::Utils::ArgumentPack< TAnyArgument... > >
 		{
-			static std::function< std::function<void()>(std::function<TCommand>, Hypodermic::Container&) > describe()
+			static std::function< std::function<void()>(std::function<TCommand>, Hypodermic::Container*) > describe()
 			{
-				return [](std::function<TCommand> command, Hypodermic::Container& container)
+				return [](std::function<TCommand> command, Hypodermic::Container* container)
 				{
-					return [command, &container]() {
+					return [command, container]() {
 						command(CommandArgumentResolverInvoker< typename TAnyArgument::Type >(container)...);
 					};
 				};
@@ -90,11 +90,11 @@ namespace Traits
 		template <class TCommand, class TPayload, class... TAnyArgument>
 		struct CommandDescriptor< TCommand, TPayload, Hypodermic::Utils::ArgumentPack< TAnyArgument... > >
 		{
-			static std::function< std::function<void(TPayload)>(std::function<TCommand>, Hypodermic::Container&) > describe()
+			static std::function< std::function<void(TPayload)>(std::function<TCommand>, Hypodermic::Container*) > describe()
 			{
-				return [](std::function<TCommand> command, Hypodermic::Container& container)
+				return [](std::function<TCommand> command, Hypodermic::Container* container)
 				{
-					return [command, &container](TPayload payload) {
+					return [command, container](TPayload payload) {
 						command(payload, CommandArgumentResolverInvoker< typename TAnyArgument::Type >(container)...);
 					};
 				};
