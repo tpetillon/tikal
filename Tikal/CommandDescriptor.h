@@ -8,8 +8,8 @@
 #include <Hypodermic/Container.h>
 #include <Hypodermic/IsSupportedArgument.h>
 
+#include "ArgumentResolver.h"
 #include "CommandTypologyDeducer.h"
-#include "ComponentArgumentResolver.h"
 
 namespace tikal
 {
@@ -33,7 +33,7 @@ namespace Traits
 			template <class T, class = typename std::enable_if< !std::is_convertible< TParent, T >::value && Hypodermic::Traits::IsSupportedArgument< typename std::decay< T >::type >::value >::type>
 			operator T()
 			{
-				return ComponentArgumentResolver< typename std::decay< T >::type >::template resolve(m_container);
+				return ArgumentResolver< typename std::decay< T >::type >::template resolve(m_container);
 			}
 
 		private:

@@ -15,11 +15,11 @@ namespace Traits
 {
 
 	template <class TArg>
-	struct ComponentArgumentResolver;
+	struct ArgumentResolver;
 
 
 	template <class TArg>
-	struct ComponentArgumentResolver< std::shared_ptr< TArg > >
+	struct ArgumentResolver< std::shared_ptr< TArg > >
 	{
 		typedef std::shared_ptr< TArg > Type;
 
