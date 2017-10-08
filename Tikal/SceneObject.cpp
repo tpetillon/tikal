@@ -5,12 +5,12 @@ namespace tikal
 
 using std::shared_ptr;
 
-SceneObject::SceneObject(SceneRoot* sceneRoot, ComponentInstantiator* componentInstantiator) :
-	m_sceneRoot(sceneRoot), m_componentInstantiator(componentInstantiator), m_name("")
+SceneObject::SceneObject(Scene* scene, ComponentInstantiator* componentInstantiator) :
+	m_scene(scene), m_componentInstantiator(componentInstantiator), m_name("")
 {}
 
-SceneObject::SceneObject(SceneRoot* sceneRoot, ComponentInstantiator* componentInstantiator, std::string name) :
-	m_sceneRoot(sceneRoot), m_componentInstantiator(componentInstantiator), m_name(name)
+SceneObject::SceneObject(Scene* scene, ComponentInstantiator* componentInstantiator, std::string name) :
+	m_scene(scene), m_componentInstantiator(componentInstantiator), m_name(name)
 {
 }
 

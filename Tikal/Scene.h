@@ -10,11 +10,11 @@ namespace tikal
 
 class ComponentInstantiator;
 
-class SceneRoot
+class Scene
 {
 public:
-	SceneRoot(std::shared_ptr<ComponentInstantiator> componentInstantiator);
-	~SceneRoot();
+	Scene(std::shared_ptr<ComponentInstantiator> componentInstantiator);
+	~Scene();
 
 	SceneObject* createSceneObject();
 	void destroySceneObject(SceneObject* sceneObject);

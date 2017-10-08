@@ -14,13 +14,13 @@
 namespace tikal
 {
 
-class SceneRoot;
+class Scene;
 
 class SceneObject : public Destroyable
 {
 public:
-	SceneObject(SceneRoot* const sceneRoot, ComponentInstantiator* const componentInstantiator);
-	SceneObject(SceneRoot* const sceneRoot, ComponentInstantiator* const componentInstantiator, std::string name);
+	SceneObject(Scene* const scene, ComponentInstantiator* const componentInstantiator);
+	SceneObject(Scene* const scene, ComponentInstantiator* const componentInstantiator, std::string name);
 
 	~SceneObject();
 
@@ -74,7 +74,7 @@ public:
 	}
 
 private:
-	SceneRoot* const m_sceneRoot;
+	Scene* const m_scene;
 	ComponentInstantiator* const m_componentInstantiator;
 
 	std::string m_name;

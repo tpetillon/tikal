@@ -9,8 +9,8 @@
 #include "ComponentContainerBuilder.h"
 #include "ComponentInstantiator.h"
 #include "EventDispatcher.h"
+#include "Scene.h"
 #include "SceneObject.h"
-#include "SceneRoot.h"
 #include "TestEvents.h"
 
 void voidFunction()
@@ -310,8 +310,8 @@ int main(int argc, char *argv[])
 		auto componentRepo = std::make_shared<tikal::ComponentRepository>();
 		auto componentInstantiator = std::make_shared<tikal::ComponentInstantiator>(componentContainer, componentRepo);
 
-		auto sceneRoot = tikal::SceneRoot(componentInstantiator);
-		auto sceneObject = sceneRoot.createSceneObject();
+		auto scene = tikal::Scene(componentInstantiator);
+		auto sceneObject = scene.createSceneObject();
 		auto componentA = sceneObject->addComponent<ComponentA>();
 		componentA->say();
 	}
