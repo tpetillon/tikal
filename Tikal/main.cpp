@@ -225,11 +225,18 @@ int main(int argc, char *argv[])
 	f1();
 	f2(1, 2, 3);
 
-	auto ed = std::make_shared<tikal::EventDispatcher>();
+	auto parentEd = std::make_shared<tikal::EventDispatcher>();
+
+	auto ed = std::make_shared<tikal::EventDispatcher>(parentEd);
+	ed->listenToParentEvent<CharEvent>();
 	auto listenerRef1 = ed->addEventListener<CharEvent>(charFunction);
 
 	char c = 'K';
-	ed->dispatchEvent<CharEvent>(c);
+	parentEd->dispatchEvent<CharEvent>(c);
+
+	auto listenerRef1a = parentEd->addEventListener<CharEvent2>(charFunction);
+	ed->redispatchEventToParent<CharEvent2>();
+	ed->dispatchEvent<CharEvent2>('C');
 
 	{
 		auto listenerRef2 = ed->addEventListener<NonCopyableTypeEvent>(nonCopyableTypeFunction);
@@ -241,17 +248,20 @@ int main(int argc, char *argv[])
 	ed->addEventListener<VoidEvent>(voidFunction);
 	ed->dispatchEvent<VoidEvent>();
 
+	Hypodermic::ContainerBuilder parentBuilder;
+	parentBuilder.registerType<ClassA>().singleInstance();
+	auto parentContainer = parentBuilder.build();
+
 	Hypodermic::ContainerBuilder builder;
 
 	builder.registerInstance<tikal::EventDispatcher>(ed);
 
-	builder.registerType<ClassA>().singleInstance();
 	builder.registerType<ClassB>().singleInstance();
 
 	//builder.registerType<ViewA>();
 	//builder.registerType<ViewB>();
 
-	auto container = builder.build();
+	auto container = builder.buildNestedContainerFrom(*parentContainer);
 
 	auto instanceA = container->resolve<ClassB>();
 
