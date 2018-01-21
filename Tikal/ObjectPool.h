@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <iterator>
 #include <vector>
 
@@ -41,11 +42,11 @@ public:
 		void* operator->() const; // dereference + member access
 
 	private:
-		Iterator(ObjectPool* pool, int blockIndex, uint8_t* position);
-		Iterator(ObjectPool* pool, int blockIndex);
+		Iterator(ObjectPool* pool, std::ptrdiff_t blockIndex, uint8_t* position);
+		Iterator(ObjectPool* pool, std::ptrdiff_t blockIndex);
 
 		ObjectPool* m_pool;
-		int m_blockIndex;
+		std::ptrdiff_t m_blockIndex;
 		uint8_t* m_position;
 
 		void moveToNext();

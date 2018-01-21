@@ -23,6 +23,8 @@ uint8_t* allocateBlock(size_t wrapperSize, size_t blockSize)
 namespace tikal
 {
 
+using std::ptrdiff_t;
+
 ObjectPool::ObjectPool(size_t objectSize, size_t blockSize) :
 	m_objectSize(objectSize),
 	m_wrapperSize(objectSize + sizeof(bool)),
@@ -122,14 +124,14 @@ ObjectPool::Iterator ObjectPool::Iterator::rend(ObjectPool* pool)
 	return ObjectPool::Iterator(pool, -1);
 }
 
-ObjectPool::Iterator::Iterator(ObjectPool* pool, int blockIndex, uint8_t* position) :
+ObjectPool::Iterator::Iterator(ObjectPool* pool, ptrdiff_t blockIndex, uint8_t* position) :
 	m_pool(pool), m_blockIndex(blockIndex), m_position(position)
 {
-	assert(blockIndex >= -1 && blockIndex <= static_cast<int>(pool->m_blocks.size()));
+	assert(blockIndex >= -1 && blockIndex <= static_cast<ptrdiff_t>(pool->m_blocks.size()));
 	// blockIndex == -1 -> iterator is rend()
 	// blockIndex == pool->m_blocks.size() -> iterator is end()
 
-	if (blockIndex >= 0 && blockIndex < static_cast<int>(pool->m_blocks.size()))
+	if (blockIndex >= 0 && blockIndex < static_cast<ptrdiff_t>(pool->m_blocks.size()))
 	{
 		auto block = pool->m_blocks.at(blockIndex);
 
@@ -137,14 +139,14 @@ ObjectPool::Iterator::Iterator(ObjectPool* pool, int blockIndex, uint8_t* positi
 	}
 }
 
-ObjectPool::Iterator::Iterator(ObjectPool* pool, int blockIndex) :
+ObjectPool::Iterator::Iterator(ObjectPool* pool, ptrdiff_t blockIndex) :
 	m_pool(pool), m_blockIndex(blockIndex)
 {
-	assert(blockIndex >= -1 && blockIndex <= static_cast<int>(pool->m_blocks.size()));
+	assert(blockIndex >= -1 && blockIndex <= static_cast<ptrdiff_t>(pool->m_blocks.size()));
 	// blockIndex == -1 -> iterator is rend()
 	// blockIndex == pool->m_blocks.size() -> iterator is end()
 
-	if (blockIndex >= 0 && blockIndex < static_cast<int>(pool->m_blocks.size()))
+	if (blockIndex >= 0 && blockIndex < static_cast<ptrdiff_t>(pool->m_blocks.size()))
 	{
 		auto block = pool->m_blocks.at(blockIndex);
 		m_position = block;
