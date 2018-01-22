@@ -4,14 +4,14 @@
 
 #include <Hypodermic/ContainerBuilder.h>
 
-#include "CommandBinder.h"
-#include "Component.h"
-#include "ComponentContainerBuilder.h"
-#include "ComponentInstantiator.h"
-#include "EventDispatcher.h"
-#include "Scene.h"
-#include "SceneObject.h"
-#include "TestEvents.h"
+#include <tikal/CommandBinder.h>
+#include <tikal/Component.h>
+#include <tikal/ComponentContainerBuilder.h>
+#include <tikal/ComponentInstantiator.h>
+#include <tikal/EventDispatcher.h>
+#include <tikal/Scene.h>
+#include <tikal/SceneObject.h>
+#include <tikal/TestEvents.h>
 
 void voidFunction()
 {
@@ -20,7 +20,7 @@ void voidFunction()
 
 void intFunction(int p, int q, int r)
 {
-	std::cout << "int " << p << std::endl;
+	std::cout << "int " << p << " " << q << " " << r << std::endl;
 }
 
 void charFunction(const char c)
@@ -214,7 +214,7 @@ void voidFunction2(std::shared_ptr<ClassB> instanceB)
 	instanceB->say();
 }
 
-int main(int argc, char *argv[])
+int main(int, char* [])
 {
 	std::function<void(void)> f1 = voidFunction;
 	std::function<void(int, int, int)> f2 = intFunction;
