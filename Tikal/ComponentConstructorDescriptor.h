@@ -49,7 +49,7 @@ namespace Traits
 		{
 			static std::function< T* (Hypodermic::Container*, void* const, SceneObject* const) > describe()
 			{
-				return [](Hypodermic::Container* container, void* const placement, SceneObject* const sceneObject)
+				return [](Hypodermic::Container*, void* const placement, SceneObject* const sceneObject)
 				{
 					return new (placement) T (sceneObject);
 				};
