@@ -22,6 +22,11 @@ public:
 		std::shared_ptr<ComponentContainer> container,
 		std::shared_ptr<ComponentRepository> m_componentRepository);
 
+	std::shared_ptr<ComponentRepository> componentRepository() const
+	{
+		return m_componentRepository;
+	}
+
 	template<typename TComponent>
 	TComponent* instantiate(SceneObject* sceneObject)
 	{

@@ -66,7 +66,7 @@ public:
 		auto it = m_components.find(type);
 		if (it != m_components.end())
 		{
-			m_componentRepository.destroyComponent(it->second);
+			m_componentInstantiator->componentRepository()->destroyComponent(it->second);
 			m_components.erase(it);
 			return;
 		}
