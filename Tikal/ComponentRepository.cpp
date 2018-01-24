@@ -14,6 +14,18 @@ using std::shared_ptr;
 ComponentRepository::ComponentRepository()
 {}
 
+ObjectPool* ComponentRepository::getPool(Hypodermic::TypeInfo type) const
+{
+	auto it = m_componentPools.find(type);
+
+	if (it != m_componentPools.end())
+	{
+		return it->second.get();
+	}
+
+	return nullptr;
+}
+
 std::unique_ptr<ObjectPool>& ComponentRepository::getOrCreatePool(
 	Hypodermic::TypeInfo type, size_t objectSize, size_t blockSize)
 {

@@ -24,6 +24,9 @@ public:
 		return m_componentInstantiator.get();
 	}
 
+	ObjectPool::Iterator begin() { return m_pool.begin(); }
+	ObjectPool::Iterator end() { return m_pool.end(); }
+
 private:
 	std::shared_ptr<ComponentInstantiator> m_componentInstantiator;
 
